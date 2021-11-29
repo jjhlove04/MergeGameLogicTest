@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         int enemyLayer = 1 << LayerMask.NameToLayer("Enemy");
-        Debug.DrawRay(transform.position, Vector2.right * 1.2f, Color.red);
+        //Debug.DrawRay(transform.position, Vector2.right * 1.2f, Color.red);
         RaycastHit2D enemyHit = Physics2D.Raycast(transform.position, Vector2.right, 1.2f, enemyLayer);
         if(enemyHit)
         {

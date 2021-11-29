@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MergeItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+public class MergeItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IEndDragHandler, IBeginDragHandler
 {
     public static MergeItem instance;
     Image sr;
@@ -12,8 +12,11 @@ public class MergeItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     bool isSelect = false;
     public GameObject contactItem;
     
+    Vector2 minPos;
+    Vector2 maxPos;
     
 
+    private Vector2 lastMousePosition;
 
     private void Awake() { instance = this;}
     public void InitItem(Item i)
@@ -27,6 +30,10 @@ public class MergeItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
         sr = GetComponent<Image>();
         sr.transform.SetParent(Merge.instance.parentObj.transform);
         sr.sprite = item.itemImg;
+    }
+
+    private void Update() {
+        
     }
 
 
@@ -43,7 +50,7 @@ public class MergeItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
    
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("hi");
+        
         if(isSelect && item.itemType == collision.GetComponent<MergeItem>().item.itemType)
         {
             
@@ -89,9 +96,52 @@ public class MergeItem : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, 
     public void OnDrag(PointerEventData eventData)
     {
         isSelect = true;
-        Vector3 mousePos = Input.mousePosition;
-        transform.position = mousePos;
+        Vector2 mousePos = Input.mousePosition;
+        Vector2 diff = mousePos - lastMousePosition;
+        RectTransform rect = GetComponent<RectTransform>();
+
+        Vector3 newPosition = rect.position +  new Vector3(diff.x, diff.y, transform.position.z);
+        Vector3 oldPos = rect.position;
+        rect.position = newPosition;
+        if(!IsRectTransformInsideSreen(rect))
+        {
+            rect.position = oldPos;
+            mousePos = oldPos;
+        }
+        lastMousePosition = mousePos;
+        
     }
 
-   
+    private bool IsRectTransformInsideSreen(RectTransform rectTransform)
+    {
+        bool isInside = false;
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        int visibleCorners = 0;
+        //경계영역
+        Rect rect = new Rect(0,150,Screen.width, 1000);
+        foreach(Vector3 corner in corners)
+        {
+            if(rect.Contains(corner))
+            {
+                visibleCorners++;
+            }
+        }
+        if(visibleCorners == 4)
+        {
+            isInside = true;
+        }
+        return isInside;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+       
+
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        lastMousePosition = eventData.position;
+    }
 }

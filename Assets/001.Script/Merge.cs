@@ -23,6 +23,7 @@ public class Merge : MonoBehaviour
     public List<MergeItem> swordList = new List<MergeItem>();
     public int ID = 0;
     public GameObject newSwordPanel;
+    
 
     public static Merge instance = null;
     private void Awake()
@@ -35,6 +36,8 @@ public class Merge : MonoBehaviour
         {
             return;
         }
+        
+        
     }
 
 
@@ -162,13 +165,13 @@ public class Merge : MonoBehaviour
 
         }
     }
+    
 
-    public void PopSwordPanel()
-    {
-        
-    }
+    
     private void Update()
-    {
+    {   
+
+       
         if(Input.GetKeyDown(KeyCode.A))
         {
             AutoMerge(MergeItem.instance.item.itemType +1);
@@ -177,5 +180,11 @@ public class Merge : MonoBehaviour
          {
              SortSword();
          }
+         if(Input.GetKeyDown(KeyCode.D))
+         {
+             
+         }
+         
     }
+    
 }
